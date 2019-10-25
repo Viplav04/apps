@@ -27,9 +27,11 @@ arm_toolchain.cmake: $(TOPDIR)/.config arm_toolchain.cmake.in
 		sed "s/@ARCH_OPT_FLAGS@/\"$(ARCHOPTIMIZATION)\"/g" \
 		> arm_toolchain.cmake
 
+ifeq (${UROS_FAST_BUILD},y)
+colcon_compile:
+else
 colcon_compile: arm_toolchain.cmake
 	$(Q) cd $(UROS_DIR); \
-		/usr/bin/time --append --output=/home/lui3si/src/micro-ros/mcu_ws.time \
 			colcon build \
 			--packages-ignore-regex=.*_cpp \
 			--cmake-args \
@@ -38,7 +40,8 @@ colcon_compile: arm_toolchain.cmake
 			-DBUILD_TESTING=OFF \
 			-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
 			-DCMAKE_TOOLCHAIN_FILE=$(APPDIR)/uros/arm_toolchain.cmake \
-			-DCMAKE_VERBOSE_MAKEFILE=ON \
+			-DCMAKE_VERBOSE_MAKEFILE=ON
+endif
 
 install: 
 
